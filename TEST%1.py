@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
-
 import time
+import imutils
+
 
 # Load Yolo
 net = cv2.dnn.readNet("yolov3-tiny.weights", "yolov3-tiny.cfg")
@@ -20,18 +21,19 @@ cap = cv2.VideoCapture(0)
 time_start = time.time()
 frame_id = 0
 while True:
+    
     # print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     # print(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     _, frame = cap.read()
+    frame = imutils.resize(frame, width=256)
     # frame = cv2.resize(frame, None, fx=2, fy=2)
     frame_id += 1
     height, width, channels = frame.shape
 
     # cv2.line(image, start_point, end_point, color, thickness)
-
-    cv2.line(frame, (320, 0), (320, width), (0, 255, 0), 2)
-    cv2.line(frame, (0, int(height / 2)), (640, int(height / 2)), (0, 255, 0), 2)
+    cv2.line(frame, (int(width/2), 0), (int(width/2), width), (0, 255, 0), 1)
+    cv2.line(frame, (0, int(height / 2)), (width, int(height / 2)), (0, 255, 0), 1)
     # Detecting objects
     blob = cv2.dnn.blobFromImage(frame, 0.00392, (224, 224), (0, 0, 0), True, crop=False)
 
@@ -76,13 +78,16 @@ while True:
             color = colors[class_ids[i]]
             # cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
             # cv2.circle(frame,(center_x,center_y),5, color,-1)
-            cv2.line(frame, (320, 240), (center_x, center_y), color, 5)
-            cv2.putText(frame, label + " " + str(round(confidence * 100)) + "%", (x, y + 30), font, 3, color, 3)
-
+            cv2.line(frame, (int(width/2), int(height/2)), (center_x, center_y), color, 2)
+            cv2.putText(frame, label + " " + str(round(confidence * 100)) + "%", (x, y + 30), font, 0.7, color, 1)
+            
+            horizontal_distance = (center_x - int(width/2))
+            vertical_distance = (center_y - int(height/2))
+            print(f"horizontal distance: {horizontal_distance} --- vert distance: {vertical_distance}")
     elapsed_time = time.time() - time_start
     fps = frame_id / elapsed_time
-    cv2.putText(frame, "FPS:" + str(round(fps, 2)), (10, 30), font, 2, (0, 0, 255), 2)
-    cv2.putText(frame, "Press 'Q' to close the window", (380, 30), font, 1, (0, 0, 255), 2)
+    cv2.putText(frame, "FPS:" + str(round(fps, 2)), (10, 30), font, 1, (0, 0, 255), 1)
+    cv2.putText(frame, "Press 'Q' to close the window", (100, 30), font, 1, (0, 0, 255), 1)
     cv2.imshow("Image", frame)
     key = cv2.waitKey(1)
     if key == ord('q'):
