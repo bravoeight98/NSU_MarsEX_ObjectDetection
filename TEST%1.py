@@ -1,12 +1,12 @@
 import cv2
 import numpy as np
 import time
-import imutils
-import serial
+#import imutils
+#import serial
 
 #serial initialiaztiom
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-ser.flush()
+#ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+#ser.flush()
 
 # Load Yolo
 net = cv2.dnn.readNet("yolov3-tiny.weights", "yolov3-tiny.cfg")
@@ -30,7 +30,7 @@ while True:
     # print(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     _, frame = cap.read()
-    frame = imutils.resize(frame, width=640)
+#    frame = imutils.resize(frame, width=640)
     # frame = cv2.resize(frame, None, fx=2, fy=2)
     frame_id += 1
     height, width, channels = frame.shape
@@ -94,7 +94,7 @@ while True:
                 text = str(horizontal_distance)+ "," +str(vertical_distance)+ "\n"
                 textForArd = str.encode(text)
                 print(text)
-                ser.write(textForArd)
+               #ser.write(textForArd)
     elapsed_time = time.time() - time_start
     fps = frame_id / elapsed_time
     cv2.putText(frame, "FPS:" + str(round(fps, 2)), (10, 30), font, 1, (0, 0, 255), 1)
